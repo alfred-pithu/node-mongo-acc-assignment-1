@@ -8,16 +8,41 @@ app.use(express.json())
 app.use(cors());
 
 
-
-
-app.get('/user/all', (req, res) => {
-    const { limit } = req.query;
-    console.log(limit)
+// Getting a random user
+app.get('/user/random', (req, res) => {
     fs.readFile('./data.json', (err, data) => {
         if (data) {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.write(data);
+            const parseData = JSON.parse(data);
+            const randomNumber = Math.floor(Math.random() * parseData.length - 1 + 1) + 1;
+            const randomData = parseData.find((person) => person.id === randomNumber);
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.write(JSON.stringify(randomData))
             res.end()
+        }
+    })
+})
+
+
+
+// TO get all the users
+app.get('/user/all', (req, res) => {
+    const { limit } = req.query;
+    const limitNumber = Number(limit)
+    fs.readFile('./data.json', (err, data) => {
+        if (data) {
+            const parsedData = JSON.parse(data)
+            if (limitNumber > parsedData.length) {
+                res.writeHead(200, { 'Content-Type': 'text/html' })
+                res.write('<h3>Eto gula data nai to bhai</h3>')
+                res.end();
+            }
+            else {
+                const limitedData = parsedData.slice(0, limitNumber);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.write(JSON.stringify(limitedData));
+                res.end()
+            }
+
         }
         else if (err) {
             res.write('Error occured')
