@@ -54,17 +54,23 @@ app.get('/user/all', (req, res) => {
     fs.readFile('./data.json', (err, data) => {
         if (data) {
             const parsedData = JSON.parse(data)
-            if (limitNumber > parsedData.length) {
-                res.writeHead(200, { 'Content-Type': 'text/html' })
-                res.write('<h3>Etto gula data nai to bhai</h3>')
-                res.end();
+            if (!limit) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.write(data);
+                res.end()
             }
-            else {
+            else if (limitNumber <= parsedData.length) {
                 const limitedData = parsedData.slice(0, limitNumber);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.write(JSON.stringify(limitedData));
                 res.end()
             }
+            else if (limitNumber > parsedData.length) {
+                res.writeHead(200, { 'Content-Type': 'text/html' })
+                res.write('<h3>Etto gula data nai to bhai</h3>')
+                res.end();
+            }
+
 
         }
         else if (err) {
