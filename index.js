@@ -81,6 +81,53 @@ app.get('/user/all', (req, res) => {
 })
 
 
+// PATCH /user/update Update a random user
+// -Update a user's information in the .json file using its id
+// - BONUS: validate the user id
+
+app.patch('/user/update/:id', (req, res) => {
+    const { id } = req.params;
+    const inputData = req.body;
+    fs.readFile('./data.json', (err, data) => {
+        if (data) {
+            const parsedData = JSON.parse(data);
+            const filteredData = parsedData.filter((data) => data.id != id)
+            const updatedData = [...filteredData, inputData]
+            const jsonUpdatedData = JSON.stringify(updatedData)
+            fs.writeFile('./data.json', jsonUpdatedData, (err) => {
+                console.log(err)
+            })
+        }
+        else if (err) {
+            res.send('err')
+        }
+    })
+    res.send('Hi');
+    res.end()
+})
+
+// DELETE /user/ delete
+// Delete a user from the .json file using its id
+// BONUS: validate the user id
+app.delete('/user/delete/:id', (req, res) => {
+    const { id } = req.params;
+    fs.readFile('./data.json', (err, data) => {
+        if (data) {
+            const parsedData = JSON.parse(data);
+            const filteredData = parsedData.filter((data) => data.id != id)
+            const jsonUpdatedData = JSON.stringify(filteredData)
+            fs.writeFile('./data.json', jsonUpdatedData, (err) => {
+                console.log(err)
+            })
+        }
+        else if (err) {
+            res.send('err')
+        }
+    })
+    res.send('Deleted Data');
+    res.end()
+})
+
 
 
 
