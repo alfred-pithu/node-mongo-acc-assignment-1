@@ -81,6 +81,8 @@ app.get('/user/all', (req, res) => {
 })
 
 
+
+
 // PATCH /user/update Update a random user
 // -Update a user's information in the .json file using its id
 // - BONUS: validate the user id
@@ -91,11 +93,17 @@ app.patch('/user/update/:id', (req, res) => {
     fs.readFile('./data.json', (err, data) => {
         if (data) {
             const parsedData = JSON.parse(data);
+            const allIds = parsedData.map((data) => data.id);
+
+            const updatingDocument = parsedData.find((data) => data.id == id)
+            Object.assign(updatingDocument, inputData)
+            console.log(updatingDocument)
             const filteredData = parsedData.filter((data) => data.id != id)
-            const updatedData = [...filteredData, inputData]
+            const updatedData = [...filteredData, updatingDocument]
             const jsonUpdatedData = JSON.stringify(updatedData)
+
             fs.writeFile('./data.json', jsonUpdatedData, (err) => {
-                console.log(err)
+                // console.log(err)
             })
         }
         else if (err) {
@@ -105,6 +113,17 @@ app.patch('/user/update/:id', (req, res) => {
     res.send('Hi');
     res.end()
 })
+
+
+// PATCH /user/bulk-update update multiple users
+// Update multiple users' information in the .json file
+// Take an array of user ids and assign it to the body.
+// BONUS: validate the body.
+
+
+
+
+
 
 // DELETE /user/ delete
 // Delete a user from the .json file using its id
